@@ -1,29 +1,33 @@
 document.addEventListener("DOMContentLoaded", function () {
     const userForm = document.getElementById("userForm");
     const userTable = document.getElementById("userTable");
+    let tableData = [];
 
-    loadTableData();
- 
-    userForm.addEventListener("submit", function (e) {
-        e.preventDefault(); 
-        addDataToTable();
-    });
+    RunApp();
 
-    function addDataToTable() {
+    function RunApp() {
+        loadTableData();
+        userForm.addEventListener("submit", handleFormSubmit);
+    }
+
+    function handleFormSubmit(event) {
+        event.preventDefault();
         const nameInput = document.getElementById("name");
         const name = nameInput.value.trim();
 
-        if (name === "") {
+        if (!name) {
             alert("Please input name!");
             return;
         }
 
+        addDataToTable(name);
+        nameInput.value = "";
+    }
+
+    function addDataToTable(name) {
         const newRow = createTableRow(name);
         userTable.appendChild(newRow);
-
-        saveTableData();
-
-        nameInput.value = "";
+        saveTableData(name);
     }
 
     function createTableRow(name) {
@@ -33,13 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
         nameCell.textContent = name;
 
         const actionCell = document.createElement("td");
-        const deleteButton = document.createElement("button");
-        deleteButton.textContent = "Delete";
-
-        deleteButton.addEventListener("click", function () {
-            userTable.removeChild(newRow);
-            saveTableData();
-        });
+        const deleteButton = createDeleteButton(newRow, name);
 
         actionCell.appendChild(deleteButton);
         newRow.appendChild(nameCell);
@@ -48,28 +46,34 @@ document.addEventListener("DOMContentLoaded", function () {
         return newRow;
     }
 
-    function saveTableData() {
-        const tableData = [];
-        const rows = userTable.querySelectorAll("tr");
-
-        rows.forEach((row) => {
-            const name = row.querySelector("td").textContent;
-            tableData.push(name);
+    function createDeleteButton(row, name) {
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Delete";
+        deleteButton.addEventListener("click", function () {
+            userTable.removeChild(row);
+            removeDataFromTable(name);
         });
+        return deleteButton;
+    }
 
+    function saveTableData(name) {
+        tableData.push(name);
         localStorage.setItem("userTableData", JSON.stringify(tableData));
     }
 
     function loadTableData() {
         const savedData = localStorage.getItem("userTableData");
-
         if (savedData) {
-            const tableData = JSON.parse(savedData);
-
-            tableData.forEach((name) => {
+            tableData = JSON.parse(savedData);
+            tableData.forEach(name => {
                 const newRow = createTableRow(name);
                 userTable.appendChild(newRow);
             });
         }
+    }
+
+    function removeDataFromTable(name) {
+        tableData = tableData.filter(item => item !== name);
+        localStorage.setItem("userTableData", JSON.stringify(tableData));
     }
 });
