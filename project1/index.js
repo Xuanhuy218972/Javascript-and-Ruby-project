@@ -49,6 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function createDeleteButton(row, name) {
         const deleteButton = document.createElement("button");
         deleteButton.textContent = "Delete";
+        deleteButton.classList.add("btn", "btn-danger", "btn-sm");
         deleteButton.addEventListener("click", function () {
             userTable.removeChild(row);
             removeDataFromTable(name);
