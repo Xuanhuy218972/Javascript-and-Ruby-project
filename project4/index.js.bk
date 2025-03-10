@@ -1,0 +1,79 @@
+const fs = require('fs');
+
+const inputFile = process.argv[2];
+if (!inputFile) {
+    console.error('Vui lòng cung cấp đường dẫn file đầu vào.');
+    process.exit(1);
+}
+
+const numbers = parseNumbersFromFile(inputFile);
+if (numbers.length === 0) {
+    console.error('File không chứa số hợp lệ. Vui lòng kiểm tra lại!');
+    process.exit(1);
+}
+
+const sortedAscending = bubbleSort([...numbers], "asc");
+const sortedDescending = bubbleSort([...numbers], "desc");
+
+function parseNumbersFromFile(filePath) {
+    if (!fs.existsSync(filePath)) {
+        console.error("File \"" + filePath + "\" không tồn tại");
+        process.exit(1);
+    }
+
+    const content = fs.readFileSync(filePath, 'utf8');
+    return content.split('\n')
+        .map(line => line.trim())
+        .filter(line => line !== '' && !isNaN(line))
+        .map(Number);
+}
+
+function bubbleSort(arr, orderBy) {
+    let n = arr.length;
+    let swapped;
+    do {
+        swapped = false;
+        for (let i = 0; i < n - 1; i++) {
+            let swap = false;
+            if (orderBy === "asc") {
+                swap = arr[i] > arr[i +  1];
+                
+            } else if (orderBy === "desc") {
+                swap = arr[i] < arr[i + 1];
+            }
+            if (swap) {
+                [arr[i], arr[i + 1]] = [arr[i + 1], arr[i]];
+            }
+            swapped = true;
+        }
+        n--;
+} while (swapped);
+return arr;
+}
+
+console.log(sortedAscending.join(", "));
+console.log(sortedDescending.join(", "));
+
+
+
+
+
+
+function selectionSort(arr, order = "asc") {
+    let n = arr.length;
+    for (let i = 0; i < n - 1; i++) {
+        let extremeIndex = i;
+
+        for (let j = i + 1; j < n; j++) {
+            if ((order === "asc" && arr[j] < arr[extremeIndex]) ||
+                (order === "desc" && arr[j] > arr[extremeIndex])) {
+                extremeIndex = j;
+            }
+        }
+
+        if (extremeIndex !== i) {
+            [arr[i], arr[extremeIndex]] = [arr[extremeIndex], arr[i]];
+        }
+    }
+    return arr;
+}
