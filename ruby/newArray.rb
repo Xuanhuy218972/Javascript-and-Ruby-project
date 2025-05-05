@@ -60,12 +60,11 @@ end
 arr = Newarray.new
 arr.add(1)
 arr.add(2)
-arr.add(2)
+arr.add(3)
 arr.display # Output: [1, 2, 3]
 arr.remove(2)
 arr.display # Output: [1, 3]
-arr.display # Output: [1]
-puts arr.size # Output: 1
+puts arr.size # Output: 2
 arr.clear
 arr.display # Output: []
 puts arr.empty? # Output: true
